@@ -4,6 +4,9 @@
 A Docker image for [OpenWGA](https://www.openwga.com), ready to run on Debian Bookworm with OpenJDK 17.  
 Easy to use – even without a reverse proxy.
 
+👉 GitHub Repository: [github.com/oldadmin/openwga-docker](https://github.com/oldadmin/openwga-docker)  
+📦 Docker Hub: [hub.docker.com/r/oldadmin/openwga](https://hub.docker.com/r/oldadmin/openwga)
+
 ## 📦 Includes
 
 - OpenWGA 7.11 CE
@@ -51,7 +54,7 @@ volumes:
 > - **Username**: `admin`
 > - **Password**: `wga`
 
-You should change the default password after first login.
+💡 You should change the default password after first login.
 
 ## ⚙️ Build Info
 
@@ -108,4 +111,5 @@ Key features:
 
 ## 🙌 Built with ❤️ by `oldadmin`
 
-Feedback, issues or pull requests are welcome!
+Feedback, issues or pull requests are welcome!  
+👉 [https://github.com/oldadmin/openwga-docker](https://github.com/oldadmin/openwga-docker)
