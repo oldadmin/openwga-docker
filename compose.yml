@@ -1,0 +1,28 @@
+services:
+  openwga_database:
+    image: mariadb:10.6
+    container_name: mariadb-openwga
+    restart: always
+    volumes:
+      - databases:/var/lib/mysql
+    environment:
+      MARIADB_ROOT_PASSWORD_HASH: ${DB_ROOT_PASSWORD_HASH}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD_HASH: ${DB_PASSWORD_HASH}
+
+  openwga:
+    image: oldadmin/openwga:7.11.9-jdk17
+    container_name: openwga
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - openwga:/var/lib/openwga
+      - config:/etc/openwga/
+    depends_on:
+      - openwga_database
+
+volumes:
+  openwga:
+  config:
+  databases:
