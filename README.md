@@ -31,7 +31,7 @@ services:
       MARIADB_PASSWORD_HASH: WGA_User_Secret_HASH
 
   openwga:
-    image: oldadmin/openwga:1.0-openkdk-17
+    image: oldadmin/openwga:7.11.9-jdk17
     container_name: openwga
     restart: always
     ports:
@@ -65,28 +65,50 @@ This image is based on `debian:bookworm` and includes:
 
 Port 8080 is exposed and mapped to the host system via Compose.
 
-## 👤 Custom UID/GID
+## 👤 UID/GID Mapping – Two Options
 
-By default, the container uses UID and GID `1100`.
+By default, the container runs as the internal user `openwga` with UID/GID `10100`.  
+If your host user has a different UID/GID (e.g. 1000), you may run into permission issues with mounted volumes.
 
-You can customize this by using build arguments:
+To fix this, the container supports **runtime UID/GID mapping** via environment variables.
 
-```bash
-docker build \
-  --build-arg OPENWGA_UID=1234 \
-  --build-arg OPENWGA_GID=1234 \
-  -t oldadmin/openwga:1.0 .
-```
+### ✅ Option 1: Set UID/GID at Runtime (Recommended)
 
-This helps if you want volume file permissions to match your local user.
-
-To apply this also at runtime, pass them via environment variables in `docker-compose.yml`:
+Use the `environment:` section in your `docker-compose.yml`:
 
 ```yaml
-environment:
-  OPENWGA_UID: 1234
-  OPENWGA_GID: 1234
+services:
+  openwga:
+    image: oldadmin/openwga:7.11.9-jdk17
+    environment:
+      OPENWGA_UID: 1000   # Your host user ID
+      OPENWGA_GID: 1000   # Your host group ID
+    volumes:
+      - ./openwga:/var/lib/openwga
 ```
+
+The container will automatically adapt its internal `openwga` user to match your local UID/GID.  
+This ensures file ownership on mounted volumes matches your user.
+
+### 🛠 Option 2: Apply UID/GID During Image Build
+
+If you want the image to always use specific UID/GID values, you can pass them during build:
+
+```yaml
+services:
+  openwga:
+    image: oldadmin/openwga:7.11.9-jdk17   
+    build:
+      context: .
+      args:
+        OPENWGA_UID: 1000
+        OPENWGA_GID: 1000
+```
+
+This permanently builds the image with the specified UID/GID.  
+Note: You only need this if you **build the image yourself locally**.
+
+> 💡 You can also combine both `build:` and `environment:` to cover both use cases.
 
 The entrypoint script automatically adjusts the internal user accordingly.
 
